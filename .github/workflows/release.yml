@@ -18,7 +18,7 @@ on:
     paths-ignore: 
       - '**.md'
       - 'LICENSE'
-
+  
   workflow_dispatch:
   
 jobs:
@@ -29,15 +29,15 @@ jobs:
         with:
           ref: build
           path: build
-
+      
       - uses: actions/checkout@v4
         with:
           ref: release
           path: release
-
+      
       - name: Install requirements
         run: pip3 install -r build/requirements.txt
-
+      
       - name: Build Rules
         run: |
           cd build || exit 1
@@ -58,13 +58,13 @@ jobs:
           curl -O https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy.conf
           curl -O https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy_group.conf
           sed -i 's/^FINAL,PROXY/FINAL,DIRECT/' lazy_group.conf
-          sed -i '/^\[General\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf' lazy_group.conf
+          sed -i '/^\\[General\\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf' lazy_group.conf
           sed -i 's|rule/QuantumultX/|rule/Shadowrocket/|g' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/GitHub\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\nDOMAIN-SUFFIX,notion.so,PROXY\nDOMAIN-SUFFIX,notion.site,PROXY' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/Apple\/Apple.list,苹果服务/i DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,苹果服务' lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/Apple\/Apple.list,DIRECT/i DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,DIRECT' lazy.conf
-          sed -i '/rule\/Shadowrocket\/Global\/Global.list/i DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Global/Global_Domain.list,PROXY' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/China\/China.list/i DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/China/China_Domain.list,DIRECT' lazy.conf lazy_group.conf
+          sed -i '/rule\\/Shadowrocket\\/GitHub\\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\\nDOMAIN-SUFFIX,notion.so,PROXY\\nDOMAIN-SUFFIX,notion.site,PROXY\\nDOMAIN-SUFFIX,via.placeholder.com,PROXY\\nDOMAIN-SUFFIX,cftunnel.com,PROXY' lazy.conf lazy_group.conf
+          sed -i '/rule\\/Shadowrocket\\/Apple\\/Apple.list,苹果服务/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,苹果服务' lazy_group.conf
+          sed -i '/rule\\/Shadowrocket\\/Apple\\/Apple.list,DIRECT/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,DIRECT' lazy.conf
+          sed -i '/rule\\/Shadowrocket\\/Global\\/Global.list/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Global/Global_Domain.list,PROXY' lazy.conf lazy_group.conf
+          sed -i '/rule\\/Shadowrocket\\/China\\/China.list/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/China/China_Domain.list,DIRECT' lazy.conf lazy_group.conf
         
       - name: Remove commits
         run: |
