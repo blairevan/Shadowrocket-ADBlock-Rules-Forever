@@ -60,7 +60,7 @@ jobs:
           sed -i 's/^FINAL,PROXY/FINAL,DIRECT/' lazy_group.conf
           sed -i '/^\[General\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf' lazy_group.conf
           sed -i 's|rule/QuantumultX/|rule/Shadowrocket/|g' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/GitHub\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\nDOMAIN-SUFFIX,notion.so,PROXY\nDOMAIN-SUFFIX,notion.site,PROXY\nDOMAIN-SUFFIX,via.placeholder.com,PROXY\nDOMAIN-SUFFIX,cftunnel.com,PROXY\nDOMAIN-SUFFIX,tavily.com,PROXY' lazy.conf lazy_group.conf
+          sed -i '/rule\/Shadowrocket\/GitHub\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\nDOMAIN-SUFFIX,notion.so,PROXY\nDOMAIN-SUFFIX,notion.site,PROXY\nDOMAIN-SUFFIX,via.placeholder.com,PROXY\nDOMAIN-SUFFIX,cftunnel.com,PROXY\nDOMAIN-SUFFIX,tavily.com,PROXY\nDOMAIN-SUFFIX,stun.services.mozilla1.com,PROXY\nDOMAIN-SUFFIX,jina.ai,PROXY\nDOMAIN-SUFFIX,go-mpulse.net,REJECT-200' lazy.conf lazy_group.conf
           sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,TELEGRAM/a IP-CIDR,194.221.250.50/32,TELEGRAM,no-resolve\nIP-CIDR,149.154.167.91/32,TELEGRAM,no-resolve' lazy_group.conf
           sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,PROXY/a IP-CIDR,194.221.250.50/32,PROXY,no-resolve\nIP-CIDR,149.154.167.91/32,PROXY,no-resolve' lazy.conf
           sed -i '/rule\/Shadowrocket\/Apple\/Apple.list,苹果服务/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,苹果服务' lazy_group.conf
