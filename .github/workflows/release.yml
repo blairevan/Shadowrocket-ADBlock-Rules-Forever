@@ -60,6 +60,8 @@ jobs:
           sed -i 's/^FINAL,PROXY/FINAL,DIRECT/' lazy_group.conf
           sed -i '/^\[General\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf' lazy_group.conf
           sed -i 's|rule/QuantumultX/|rule/Shadowrocket/|g' lazy.conf lazy_group.conf
+          sed -i '/# always-real-ip =/a\\
+always-real-ip = *.argotunnel.com, github.com, api.github.com, codeload.github.com, raw.githubusercontent.com, objects.githubusercontent.com, release-assets.githubusercontent.com, registry.npmjs.org, pypi.org, files.pythonhosted.org' lazy.conf lazy_group.conf
           sed -i '/\*\.icloud\.com = server:system/a\\
 *.argotunnel.com = server:system\\
 github.com = server:system\\
