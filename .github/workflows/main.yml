@@ -31,7 +31,7 @@ jobs:
           rm lazy.conf lazy_group.conf
           curl -O https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy.conf
           curl -O https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy_group.conf
-          sed -i 's/^FINAL,PROXY/FINAL,DIRECT/' lazy_group.conf
+          sed -i 's/^FINAL,DIRECT/FINAL,PROXY/' lazy_group.conf
           sed -i '/^\[General\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf' lazy_group.conf
         
       - name: Deploy
