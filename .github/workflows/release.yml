@@ -62,17 +62,6 @@ jobs:
           sed -i 's|rule/QuantumultX/|rule/Shadowrocket/|g' lazy.conf lazy_group.conf
           sed -i '/# always-real-ip =/a\\
 always-real-ip = *.argotunnel.com, github.com, api.github.com, codeload.github.com, raw.githubusercontent.com, objects.githubusercontent.com, release-assets.githubusercontent.com, registry.npmjs.org, pypi.org, files.pythonhosted.org' lazy.conf lazy_group.conf
-          sed -i '/\*\.icloud\.com = server:system/a\\
-*.argotunnel.com = server:system\\
-github.com = server:system\\
-api.github.com = server:system\\
-codeload.github.com = server:system\\
-raw.githubusercontent.com = server:system\\
-objects.githubusercontent.com = server:system\\
-release-assets.githubusercontent.com = server:system\\
-registry.npmjs.org = server:system\\
-pypi.org = server:system\\
-files.pythonhosted.org = server:system' lazy.conf lazy_group.conf
           sed -i '/rule\/Shadowrocket\/GitHub\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\nDOMAIN-SUFFIX,notion.so,PROXY\nDOMAIN-SUFFIX,notion.site,PROXY\nDOMAIN-SUFFIX,via.placeholder.com,PROXY\nDOMAIN-SUFFIX,cftunnel.com,PROXY\nDOMAIN-SUFFIX,tavily.com,PROXY\nDOMAIN-SUFFIX,stun.services.mozilla1.com,PROXY\nDOMAIN-SUFFIX,jina.ai,PROXY\nDOMAIN-SUFFIX,go-mpulse.net,REJECT-200' lazy.conf lazy_group.conf
           sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,TELEGRAM/a IP-CIDR,194.221.250.50/32,TELEGRAM,no-resolve\nIP-CIDR,149.154.167.91/32,TELEGRAM,no-resolve' lazy_group.conf
           sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,PROXY/a IP-CIDR,194.221.250.50/32,PROXY,no-resolve\nIP-CIDR,149.154.167.91/32,PROXY,no-resolve' lazy.conf
