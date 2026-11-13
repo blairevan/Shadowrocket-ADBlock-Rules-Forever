@@ -1,0 +1,41 @@
+#!name=哔哩哔哩去广告
+#!desc=B站开屏广告、推荐信息流广告、动态广告与Proto去广告(支持新版客户端)
+#!icon=https://raw.githubusercontent.com/deezertidal/private/main/icons/biliad.png
+#!homepage=https://github.com/app2smile/rules
+#!author=app2smile
+
+[Rule]
+AND,((DOMAIN-SUFFIX,bilibili.com), (PROTOCOL,UDP)),REJECT
+AND,((DOMAIN-SUFFIX,biliapi.net), (PROTOCOL,UDP)),REJECT
+
+[MITM]
+hostname = %APPEND% app.bilibili.com, grpc.biliapi.net, api.bilibili.com, api.live.bilibili.com, api.vc.bilibili.com, manga.bilibili.com
+
+[URL Rewrite]
+#～BiliBili_哔哩哔哩_屏蔽IP请求
+^https?:\/\/app\.bilibili\.com\/x\/resource\/ip - reject
+#～BiliBili_哔哩哔哩_屏蔽DefaultWord
+^https?:\/\/app\.bilibili\.com\/bilibili\.app\.interface\.v1\.Search\/Default - reject
+#～BiliBili_哔哩哔哩_屏蔽首页右上活动
+^https?:\/\/app\.bilibili\.com\/x\/resource\/top\/activity - reject-dict
+#～BiliBili_哔哩哔哩_Defaultword
+^https://app.bilibili.com/x/v2/search/defaultwords - reject-dict
+#～BiliBili_哔哩哔哩_Material_Ad
+^https?:\/\/api\.bilibili\.com\/x\/vip\/ads\/material\/report - reject-dict
+#～BiliBili_哔哩哔哩_小卡片广告
+^https://api.bilibili.com/pgc/season/player/cards - reject-dict
+#～BiliBili_哔哩哔哩_去除搜索中的大家都在搜
+^https?:\/\/api\.vc\.bilibili\.com\/search_svr\/v\d\/Search\/recommend_words - reject
+#～BiliBili_哔哩哔哩_去除动态中的话题
+^https?:\/\/api\.vc\.bilibili\.com\/topic_svr\/v1\/topic_svr - reject-dict
+#～BiliBili_哔哩哔哩_推荐推广
+^https?:\/\/api\.bilibili\.com\/pgc\/season\/app\/related\/recommend\? - reject-dict
+#～BiliBili_哔哩哔哩_漫画去广告
+^https?:\/\/manga\.bilibili\.com\/twirp\/comic\.v\d\.Comic\/(Flash|ListFlash) - reject-dict
+
+[Script]
+#～BiliBili_哔哩哔哩_开屏与推荐广告处理(REST JSON)
+bili-json = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/x\/(v2\/(splash\/(list|show)|feed\/index\?)|resource\/show\/tab\/v2),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/bilibili-json.js,script-update-interval=0
+
+#～BiliBili_哔哩哔哩_播放页与动态去广告(Protobuf / gRPC)
+bili-proto = type=http-response,pattern=^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.app\.(viewunite\.v1\.View\/View|dynamic\.v2\.Dynamic\/DynAll)$,requires-body=1,binary-body-mode=1,max-size=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/bilibili-proto.js,script-update-interval=0
