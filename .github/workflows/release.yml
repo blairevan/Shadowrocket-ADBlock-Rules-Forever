@@ -86,6 +86,9 @@ jobs:
             mv "$config.tmp" "$config"
           done
 
+      - name: Keep Baidu Netdisk ad overrides
+        run: python3 release/.github/scripts/apply_baidu_ads.py release/lazy.conf release/lazy_group.conf
+
       - name: Validate Xiaoyuzhou rules
         run: python3 -m unittest discover -s release/tests -v
 
