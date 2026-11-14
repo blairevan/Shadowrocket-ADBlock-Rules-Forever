@@ -1,6 +1,7 @@
 """Exercise the real release step without network access or publishing."""
 
 from pathlib import Path
+import os
 import subprocess
 import tempfile
 import textwrap
@@ -14,12 +15,11 @@ RULES = (
 )
 
 
-def release_step():
-    """Read the shell block that patches freshly downloaded lazy configs."""
+def release_step(name="Keep Xiaoyuzhou connections direct"):
+    """Read a release shell block without executing unrelated workflow steps."""
     workflow = (ROOT / ".github/workflows/release.yml").read_text()
-    section = workflow.split(
-        "      - name: Keep Xiaoyuzhou connections direct\n        run: |\n", 1
-    )[1].split("\n      - name:", 1)[0]
+    section = workflow.split("      - name: " + name + "\n", 1)[1]
+    section = section.split("\n      - name:", 1)[0].split("        run: |\n", 1)[1]
     return textwrap.dedent(section)
 
 
@@ -79,6 +79,46 @@ class XiaoyuzhouRulesTests(unittest.TestCase):
             )
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(config.read_text(), "[General]\n# missing rules\n")
+
+    def test_published_config_waits_for_cache_and_rejects_stale_content(self):
+        """Verify the actual published URL, retry cached bytes, and fail on drift."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "release").mkdir()
+            expected = root / "release/lazy_group.conf"
+            expected.write_text("[Rule]\n" + "\n".join(RULES) + "\n")
+            curl = root / "curl"
+            curl.write_text(
+                "#!/bin/bash\nset -eu\n"
+                "for argument in \"$@\"; do last_argument=$argument; done\n"
+                "test \"$last_argument\" = \"$PUBLISHED_CONFIG_URL\"\n"
+                "while [[ $1 != --output ]]; do shift; done\n"
+                "counter=0\n"
+                "if [[ -f attempts ]]; then counter=$(cat attempts); fi\n"
+                "counter=$((counter + 1))\nprintf '%s' \"$counter\" > attempts\n"
+                "if [[ $counter -lt 2 || ${KEEP_STALE:-0} == 1 ]]; then\n"
+                "  printf 'outdated config' > \"$2\"\n"
+                "else\n  cp release/lazy_group.conf \"$2\"\nfi\n"
+            )
+            curl.chmod(0o755)
+            environment = {
+                **os.environ,
+                "PATH": str(root) + os.pathsep + os.environ.get("PATH", "/usr/bin:/bin"),
+                "PUBLISHED_CONFIG_URL": "https://example.invalid/release/lazy_group.conf",
+                "CONFIG_SYNC_ATTEMPTS": "2",
+                "CONFIG_SYNC_DELAY_SECONDS": "0",
+            }
+            for keep_stale in ("0", "1"):
+                with self.subTest(keep_stale=keep_stale):
+                    (root / "attempts").write_text("0")
+                    result = subprocess.run(
+                        ["bash", "-c", release_step("Verify published lazy config")],
+                        cwd=root, env={**environment, "KEEP_STALE": keep_stale},
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, int(keep_stale), result.stderr)
+                    self.assertEqual((root / "attempts").read_text(), "2")
+            self.assertEqual(expected.read_text(), "[Rule]\n" + "\n".join(RULES) + "\n")
 
 
 if __name__ == "__main__":

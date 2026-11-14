@@ -89,7 +89,7 @@ jobs:
       - name: Validate Xiaoyuzhou rules
         run: python3 -m unittest discover -s release/tests -v
 
-      - name: Remove commits
+      - name: Publish rules to release
         run: |
           cd release || exit 1
           git config user.name 'github-actions[bot]'
@@ -100,4 +100,29 @@ jobs:
           git branch -D release
           git branch -m release
           git push -f origin release
+
+      - name: Verify published lazy config
+        env:
+          PUBLISHED_CONFIG_URL: https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf
+        run: |
+          set -euo pipefail
+          sync_attempts=${CONFIG_SYNC_ATTEMPTS:-20}
+          sync_delay=${CONFIG_SYNC_DELAY_SECONDS:-15}
+          remote_config=$(mktemp)
+          trap 'rm -f "$remote_config"' EXIT
+          for ((attempt = 1; attempt <= sync_attempts; attempt++)); do
+            if curl --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              --header 'Cache-Control: no-cache' \
+              --output "$remote_config" "$PUBLISHED_CONFIG_URL" \
+              && cmp -s release/lazy_group.conf "$remote_config"; then
+              echo "Published lazy_group.conf matches the generated config."
+              exit 0
+            fi
+            if ((attempt < sync_attempts)); then
+              sleep "$sync_delay"
+            fi
+          done
+          echo "Published lazy_group.conf is unavailable or differs from this release." >&2
+          exit 1
 
