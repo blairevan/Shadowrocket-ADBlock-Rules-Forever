@@ -17,6 +17,7 @@ AD_HOSTS = (
     "pgdt.ugdtimg.com",
     "api-access.pangolin-sdk-toutiao.com",
     "api-access.pangolin-sdk-toutiao1.com",
+    "api-access.pangolin-sdk-toutiao-b.com",
     "entry-su1.ubixioe.com",
     "adx-cfg-u1.ubixioe.com",
     "adx-data-u1.ubixioe.com",
