@@ -15,6 +15,15 @@ DOMAINS = (
     "sdk.beizi.biz",
     "sdk.zhangyuyidong.cn",
     "bj-td-menta-01-callback.advlion.com",
+    "v3.gdt.qq.com",
+    "v2mi.gdt.qq.com",
+    "win.gdt.qq.com",
+    "pgdt.ugdtimg.com",
+    "api-access.pangolin-sdk-toutiao.com",
+    "api-access.pangolin-sdk-toutiao1.com",
+    "entry-su1.ubixioe.com",
+    "adx-cfg-u1.ubixioe.com",
+    "adx-data-u1.ubixioe.com",
 )
 BASE = (
     "[General]\nkeep-setting = true\n[Rule]\n"
