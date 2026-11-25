@@ -1,0 +1,12 @@
+# Single Source of Truth: Reward+ & HSBC HK App domains -> HK-IPLC-3
+# Syntax: '+.domain' = domain suffix match; 'domain' = exact host match
+www.redhotoffers.hsbc.com.hk
+rbwm-api.hsbc.com.hk
+cdntm.hsbc.com.hk
+www.hsbc.com.hk
+cdnbc-wup.hsbc.com.hk
+m.mobilex-static.hsbc.com.hk
+hsbc.edge.sdk.awswaf.com
+c-hsbc.lytics.io
+eapi.preferences.prod.ap-east-1.vam-hk.cloud1.vv1865.com
+messaging.prod.ap-east-1.vam-hk.cloud1.vv1865.com

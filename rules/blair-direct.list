@@ -1,0 +1,8 @@
+# NAME: Explicit Direct Overrides (Shadowrocket DOMAIN-SET)
+# GENERATED_BY: .github/scripts/compile_policy.py
+# TOTAL: 5 (suffix=3, exact=2)
+.argotunnel.com
+.xiaoyuzhoufm.com
+.xyzcdn.net
+miwifi.com
+www.miwifi.com

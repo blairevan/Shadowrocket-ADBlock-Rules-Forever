@@ -38,7 +38,7 @@ BASE = (
 def patched_config(text):
     """Apply the release script to one isolated config and return its bytes."""
     with tempfile.TemporaryDirectory() as directory:
-        config = Path(directory) / "lazy_group.conf"
+        config = Path(directory) / "blair_group.conf"
         config.write_text(text)
         result = subprocess.run(
             ["python3", str(SCRIPT), str(config)],
@@ -97,7 +97,7 @@ class BaiduAdsTests(unittest.TestCase):
     def test_invalid_second_config_leaves_both_originals_intact(self):
         """Validate all upstream inputs before writing any updated config."""
         with tempfile.TemporaryDirectory() as directory:
-            paths = [Path(directory) / name for name in ("lazy.conf", "lazy_group.conf")]
+            paths = [Path(directory) / name for name in ("lazy.conf", "blair_group.conf")]
             originals = [BASE, "[General]\n# missing rules\n"]
             for path, original in zip(paths, originals):
                 path.write_text(original)
@@ -110,13 +110,13 @@ class BaiduAdsTests(unittest.TestCase):
 
     def test_checked_in_configs_and_release_step_include_the_patch(self):
         """Both published variants must retain the patch after an upstream refresh."""
-        for name in ("lazy.conf", "lazy_group.conf"):
+        for name in ("lazy.conf", "blair_group.conf"):
             config = (ROOT / name).read_text()
             self.assertEqual(patched_config(config), config)
             for domain in DOMAINS:
                 self.assertIn(f"DOMAIN,{domain},REJECT", config)
         workflow = (ROOT / ".github/workflows/release.yml").read_text()
-        command = "python3 release/.github/scripts/apply_baidu_ads.py release/lazy.conf release/lazy_group.conf"
+        command = "python3 release/.github/scripts/apply_baidu_ads.py release/lazy.conf release/blair_group.conf"
         self.assertIn(command, workflow)
         self.assertLess(workflow.index("Keep Xiaoyuzhou connections direct"), workflow.index(command))
         self.assertLess(workflow.index(command), workflow.index("Validate Xiaoyuzhou rules"))

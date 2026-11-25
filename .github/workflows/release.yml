@@ -54,25 +54,25 @@ jobs:
       - name: Update lazy rules
         run: |
           cd release || exit 1
-          rm lazy.conf lazy_group.conf
-          curl -O https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy.conf
-          curl -O https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy_group.conf
-          sed -i 's/^skip-proxy = /skip-proxy = 100.64.0.0\/10,/' lazy.conf lazy_group.conf
-          sed -i 's/^FINAL,DIRECT/FINAL,PROXY/' lazy_group.conf
-          sed -i '/^\[General\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf' lazy_group.conf
-          sed -i 's|rule/QuantumultX/|rule/Shadowrocket/|g' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/GitHub\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\nDOMAIN-SUFFIX,notion.so,PROXY\nDOMAIN-SUFFIX,notion.site,PROXY\nDOMAIN-SUFFIX,via.placeholder.com,PROXY\nDOMAIN-SUFFIX,cftunnel.com,PROXY\nDOMAIN-SUFFIX,tavily.com,PROXY\nDOMAIN-SUFFIX,stun.services.mozilla1.com,PROXY\nDOMAIN-SUFFIX,jina.ai,PROXY\nDOMAIN-SUFFIX,go-mpulse.net,REJECT-200' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,TELEGRAM/a IP-CIDR,194.221.250.50/32,TELEGRAM,no-resolve\nIP-CIDR,149.154.167.91/32,TELEGRAM,no-resolve' lazy_group.conf
+          rm -f lazy.conf lazy_group.conf blair_group.conf
+          curl -fsSL -o lazy.conf https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy.conf
+          curl -fsSL -o blair_group.conf https://raw.githubusercontent.com/LOWERTOP/Shadowrocket/main/lazy_group.conf
+          sed -i 's/^skip-proxy = /skip-proxy = 100.64.0.0\/10,/' lazy.conf blair_group.conf
+          sed -i 's/^FINAL,DIRECT/FINAL,PROXY/' blair_group.conf
+          sed -i '/^\[General\]/a update-url = https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/blair_group.conf' blair_group.conf
+          sed -i 's|rule/QuantumultX/|rule/Shadowrocket/|g' lazy.conf blair_group.conf
+          sed -i '/rule\/Shadowrocket\/GitHub\/GitHub.list/a DOMAIN-SUFFIX,notion.com,PROXY\nDOMAIN-SUFFIX,notion.so,PROXY\nDOMAIN-SUFFIX,notion.site,PROXY\nDOMAIN-SUFFIX,via.placeholder.com,PROXY\nDOMAIN-SUFFIX,cftunnel.com,PROXY\nDOMAIN-SUFFIX,tavily.com,PROXY\nDOMAIN-SUFFIX,stun.services.mozilla1.com,PROXY\nDOMAIN-SUFFIX,jina.ai,PROXY\nDOMAIN-SUFFIX,go-mpulse.net,REJECT-200' lazy.conf blair_group.conf
+          sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,TELEGRAM/a IP-CIDR,194.221.250.50/32,TELEGRAM,no-resolve\nIP-CIDR,149.154.167.91/32,TELEGRAM,no-resolve' blair_group.conf
           sed -i '/rule\/Shadowrocket\/Telegram\/Telegram.list,PROXY/a IP-CIDR,194.221.250.50/32,PROXY,no-resolve\nIP-CIDR,149.154.167.91/32,PROXY,no-resolve' lazy.conf
-          sed -i '/rule\/Shadowrocket\/Apple\/Apple.list,苹果服务/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,苹果服务' lazy_group.conf
+          sed -i '/rule\/Shadowrocket\/Apple\/Apple.list,苹果服务/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,苹果服务' blair_group.conf
           sed -i '/rule\/Shadowrocket\/Apple\/Apple.list,DIRECT/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple_Domain.list,DIRECT' lazy.conf
-          sed -i '/rule\/Shadowrocket\/Global\/Global.list/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Global/Global_Domain.list,PROXY' lazy.conf lazy_group.conf
-          sed -i '/rule\/Shadowrocket\/China\/China.list/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/China/China_Domain.list,DIRECT' lazy.conf lazy_group.conf
+          sed -i '/rule\/Shadowrocket\/Global\/Global.list/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Global/Global_Domain.list,PROXY' lazy.conf blair_group.conf
+          sed -i '/rule\/Shadowrocket\/China\/China.list/s DOMAIN-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/China/China_Domain.list,DIRECT' lazy.conf blair_group.conf
         
       - name: Keep Xiaoyuzhou connections direct
         run: |
           set -euo pipefail
-          for config in release/lazy.conf release/lazy_group.conf; do
+          for config in release/lazy.conf release/blair_group.conf; do
             awk '
               /^DOMAIN-SUFFIX,(xiaoyuzhoufm\.com|xyzcdn\.net),/ { next }
               { print }
@@ -87,7 +87,13 @@ jobs:
           done
 
       - name: Keep Baidu Netdisk ad overrides
-        run: python3 release/.github/scripts/apply_baidu_ads.py release/lazy.conf release/lazy_group.conf
+        run: python3 release/.github/scripts/apply_baidu_ads.py release/lazy.conf release/blair_group.conf
+
+      - name: Compile SSOT policy lists
+        run: python3 release/.github/scripts/compile_policy.py release
+
+      - name: Align R3D router policy
+        run: python3 release/.github/scripts/apply_r3d_alignment.py release/lazy.conf release/blair_group.conf
 
       - name: Validate Xiaoyuzhou rules
         run: python3 -m unittest discover -s release/tests -v
@@ -106,7 +112,7 @@ jobs:
 
       - name: Verify published lazy config
         env:
-          PUBLISHED_CONFIG_URL: https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/lazy_group.conf
+          PUBLISHED_CONFIG_URL: https://raw.githubusercontent.com/blairevan/Shadowrocket-ADBlock-Rules-Forever/release/blair_group.conf
         run: |
           set -euo pipefail
           sync_attempts=${CONFIG_SYNC_ATTEMPTS:-20}
@@ -118,14 +124,14 @@ jobs:
               --connect-timeout 10 --max-time 20 \
               --header 'Cache-Control: no-cache' \
               --output "$remote_config" "$PUBLISHED_CONFIG_URL" \
-              && cmp -s release/lazy_group.conf "$remote_config"; then
-              echo "Published lazy_group.conf matches the generated config."
+              && cmp -s release/blair_group.conf "$remote_config"; then
+              echo "Published blair_group.conf matches the generated config."
               exit 0
             fi
             if ((attempt < sync_attempts)); then
               sleep "$sync_delay"
             fi
           done
-          echo "Published lazy_group.conf is unavailable or differs from this release." >&2
+          echo "Published blair_group.conf is unavailable or differs from this release." >&2
           exit 1
 

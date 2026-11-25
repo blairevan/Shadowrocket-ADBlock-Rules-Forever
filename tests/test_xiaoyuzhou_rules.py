@@ -28,7 +28,7 @@ class XiaoyuzhouRulesTests(unittest.TestCase):
 
     def test_local_config_routes_xiaoyuzhou_before_other_rules(self):
         """The checked-in config must prioritize both domains over rulesets."""
-        config = (ROOT / "lazy_group.conf").read_text()
+        config = (ROOT / "blair_group.conf").read_text()
         lines = config.splitlines()
         start = lines.index("[Rule]")
         first_ruleset = next(
@@ -54,7 +54,7 @@ class XiaoyuzhouRulesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "release").mkdir()
-            configs = [root / "release" / name for name in ("lazy.conf", "lazy_group.conf")]
+            configs = [root / "release" / name for name in ("lazy.conf", "blair_group.conf")]
             for config in configs:
                 config.write_text(original)
             for _ in range(2):
@@ -85,7 +85,7 @@ class XiaoyuzhouRulesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "release").mkdir()
-            expected = root / "release/lazy_group.conf"
+            expected = root / "release/blair_group.conf"
             expected.write_text("[Rule]\n" + "\n".join(RULES) + "\n")
             curl = root / "curl"
             curl.write_text(
@@ -98,13 +98,13 @@ class XiaoyuzhouRulesTests(unittest.TestCase):
                 "counter=$((counter + 1))\nprintf '%s' \"$counter\" > attempts\n"
                 "if [[ $counter -lt 2 || ${KEEP_STALE:-0} == 1 ]]; then\n"
                 "  printf 'outdated config' > \"$2\"\n"
-                "else\n  cp release/lazy_group.conf \"$2\"\nfi\n"
+                "else\n  cp release/blair_group.conf \"$2\"\nfi\n"
             )
             curl.chmod(0o755)
             environment = {
                 **os.environ,
                 "PATH": str(root) + os.pathsep + os.environ.get("PATH", "/usr/bin:/bin"),
-                "PUBLISHED_CONFIG_URL": "https://example.invalid/release/lazy_group.conf",
+                "PUBLISHED_CONFIG_URL": "https://example.invalid/release/blair_group.conf",
                 "CONFIG_SYNC_ATTEMPTS": "2",
                 "CONFIG_SYNC_DELAY_SECONDS": "0",
             }
