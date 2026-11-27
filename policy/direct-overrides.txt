@@ -1,6 +1,7 @@
 # Single Source of Truth: Explicit direct override domains -> DIRECT
 # Syntax: '+.domain' = domain suffix match; 'domain' = exact host match
 +.argotunnel.com
++.turgame.com
 +.xiaoyuzhoufm.com
 +.xyzcdn.net
 miwifi.com
